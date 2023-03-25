@@ -1,0 +1,15 @@
+/datasets/
+/venv/
+.idea/
+out/
+.gitignore
+.idea/.gitignore
+.idea/NeuralNetworksComparision.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+common/
+examples/
+tex/
+venv/
