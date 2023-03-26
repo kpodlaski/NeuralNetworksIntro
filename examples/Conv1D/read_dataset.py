@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import torch
 
 from sklearn.preprocessing._encoders import OneHotEncoder
 from sklearn.preprocessing._label import LabelEncoder
@@ -20,9 +21,26 @@ def create_acc_from_raw_uci_har(type):
 
 def read_acc_data_one_hot():
     train_X, train_Y, test_X, test_Y = read_acc_data()
+    # Our Tensorflow solution require One-Hot labels
     train_Y = OneHotEncoder().fit_transform(train_Y).toarray()
     test_Y = OneHotEncoder().fit_transform(test_Y).toarray()
     return train_X, train_Y, test_X, test_Y
+
+def read_acc_data_pytorch(batch_size_train, batch_size_test, data_loader_kwargs):
+    train_X, train_Y, test_X, test_Y = read_acc_data()
+    # Classes are orginally from 1 to 5, we need to have ints from 0
+    train_Y = train_Y - 1
+    test_Y = test_Y - 1
+    # Add one dimension, its required by con1d layer
+    train_X = train_X.reshape(-1, 1, 128)
+    test_X = test_X.reshape(-1, 1, 128)
+    # Create Dataset object
+    train_loader = torch.utils.data.TensorDataset(torch.Tensor(train_X), torch.Tensor(train_Y.reshape(-1)).long())
+    test_loader = torch.utils.data.TensorDataset(torch.Tensor(test_X), torch.Tensor(test_Y.reshape(-1)).long())
+    # Create DataLoaders
+    train_loader = torch.utils.data.DataLoader(train_loader, batch_size=batch_size_train, shuffle=True, **data_loader_kwargs)
+    test_loader = torch.utils.data.DataLoader(test_loader, batch_size=batch_size_test, shuffle=True, **data_loader_kwargs)
+    return train_loader, test_loader
 
 def read_acc_data():
     actual_path = os.getcwd()

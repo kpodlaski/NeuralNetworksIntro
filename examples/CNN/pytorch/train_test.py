@@ -38,15 +38,6 @@ test_loader = torch.utils.data.DataLoader(
                              ])),
     batch_size=batch_size_test, shuffle=True, **data_loader_kwargs)
 
-
-examples = enumerate(test_loader)
-batch_idx, (example_data, example_targets) = next(examples)
-print(example_data)
-print(example_data.shape)
-print(example_data[0].item())
-
-exit(33)
-
 network = ConvNet()
 optimizer = optim.SGD(network.parameters(), lr=learning_rate,
                       momentum=momentum)
@@ -57,7 +48,7 @@ ml.summary((1,28,28))
 print("Start training")
 for epoch in range(1, n_epochs + 1):
   ml.train(epoch, train_loader, test_loader)
-ml.save_model("dense_network")
+ml.save_model("conv_network")
 
 print("Test on training set:")
 ml.test(train_loader)
