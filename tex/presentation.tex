@@ -1,0 +1,342 @@
+\documentclass{beamer}%[handout]
+\usetheme{Boadilla}%Berlin}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsopn}
+%\usepackage{cite}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%\usepackage[style=authoryear]{biblatex}
+%\bibliography{revbibl}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{apacite}
+\setlength{\arrayrulewidth}{1pt}
+\usepackage{tikz}
+    \usetikzlibrary{positioning}
+    \usetikzlibrary{decorations.pathreplacing}
+    \usetikzlibrary{fadings}
+    \usetikzlibrary{matrix}
+
+\tikzset{basic/.style={draw,fill=blue!20,text width=1em,text badly centered}}
+\tikzset{input/.style={basic,circle}}
+\tikzset{weights/.style={basic,rectangle}}
+\tikzset{functions/.style={basic,circle,fill=blue!10}}
+\tikzset{hidden/.style={draw,shape=circle,fill=blue!30,minimum size=1.15cm}}
+\tikzset{output/.style={draw,shape=circle,fill=red!20,minimum size=1.15cm}}
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\makeatother
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.8\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}
+    \insertshorttitle{}\hspace*{12ex}
+    \insertframenumber/\inserttotalframenumber%\hspace*{1ex}
+  \end{beamercolorbox}
+  }%
+  \vskip0pt%
+}
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+
+\theoremstyle{definition}
+\newtheorem*{proposition}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem*{enboxed}{}
+
+\theoremstyle{example}
+\newtheorem*{code_ex}{Code Example}
+
+\theoremstyle{example}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\srcsize}{\@setfontsize{\srcsize}{5pt}{5pt}}
+
+\begin{document}
+\title{Simple Neural Networks in  PyTorch vs Tensorflow}
+\subtitle{Fast intro for beginners}
+
+
+\author{Krzysztof Podlaski}
+
+\date{\tiny Seminarium\\
+Katedry Systemów Inteligentnych\\
+Uniwersytet Łódzki\\
+31 Marca 2023}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\section{Neural network libraries in python}
+\begin{frame}
+W have two main Machine Learning tools in python:
+\begin{itemize}
+\item PyTorch -- library for advanced programmers, more control, but also more details and coding.
+\item Tensorflow -- much nicer library for the start.
+\end{itemize}
+
+Both support GPU computing, PyTorch is said to do better in distributed GPU systems.
+\end{frame}
+\begin{frame}[fragile]{Dense network}
+
+Dense networks are the most classical architectures. MLP -- Multilayer Perceptron.
+
+We have set of neurons, each have inputs and weights, sums them up, add bias and activation function.
+
+\begin{equation*}
+  y = f(\sum_i x_iw_i+b)
+\end{equation*}
+
+\begin{figure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\resizebox{\textwidth}{!}{
+\input{perceptron}
+}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.6\textwidth}
+\resizebox{\textwidth}{!}{
+\input{mlp}
+}
+\end{subfigure}\blfootnote{\tiny pictures based on \url{https://tex.stackexchange.com/questions/104334/tikz-diagram-of-a-perceptron} and \url{https://tikz.net/neural_networks/}}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Dataset -- MNIST}
+\begin{itemize}
+\item contains images of digits
+\item each image 28x28 gray scale
+\item all have assigned labels
+\item incorporated with PyTorch and Tensorflow
+\end{itemize}
+\begin{figure}
+\centering
+\includegraphics[width=.6\textwidth]{images/mnist.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Basic info about implementation}
+\begin{itemize}
+  \item All codes are on github: \url{https://github.com/kpodlaski/NeuralNetworksIntro}
+  \item Dense network are in directory: examples $\rightarrow$ DenseNetwork
+  \item Tensorflow is in: examples $\rightarrow$ DenseNetwork $\rightarrow$ tensorflow
+  \item PyYorch is in: examples $\rightarrow$ DenseNetwork $\rightarrow$ pytorch \\and common $\rightarrow$ pytorch
+  \item Task: digit recognition (classification)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Dense network architecture (MLP)}
+Implemented in both libraries
+\begin{itemize}
+  \item input layer -- 794 signals ($28\times28$)
+  \item 1st layer -- 320 neurons tanh activation
+  \item 2nd layer -- 240 neurons sigmoid activation
+  \item 3rd layer -- 120 neurons relu activation
+  \item out layer -- 10 neurons softmax activation
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Convolution Layer}
+
+\begin{equation}
+(I*K)_m,n = \sum_{i}\sum_{k}I_{j,k}K_{m-j, n-k}
+\end{equation}
+
+\begin{figure}
+  \centering
+  \input{convolution}\blfootnote{\tiny picture based on \url{https://tikz.net/conv2d/}}
+
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Pooling layer}
+
+
+\begin{figure}
+  \centering
+  \input{maxpool}
+
+\end{figure}
+\end{frame}
+
+\begin{frame}{Convolutional network architecture (CNN)}
+Implemented in both libraries
+\begin{itemize}
+  \item input layer -- 794 signals ($28\times28$)
+  \item 1st layer -- 10 filters 5x5, stride 1,1, tanh
+  \item 2nd layer -- MaxPool 2x2, stride 2,2
+  \item 3rd layer -- 20 filters 5x5, stride 1,1, tanh
+  \item 4th layer -- MaxPool 2x2, stride 2,2
+  \item 5th layer -- Dense, 50 neurons, tanh
+  \item out layer -- 10 neurons softmax activation
+\end{itemize}
+\end{frame}
+
+\begin{frame}{1D convolution}
+We need to change dataset, one dimensional or time-series data is better in this case.
+\begin{itemize}
+\item We use \href{https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones}{\color{blue}\underline{UCI HAR Dataset}}
+\item It contain mobile sensors data, allow recision behaviour
+\item walking, walking upstairs, walking downstairs, sitting, standing, laying
+\item we use only global acceleration and as a total i.e $\text{a}=\sqrt{a_x^2+a_y^2+a_z^2}$
+\begin{itemize}
+  \item its not the best approach, but serves for this tutorial
+  \item we should join three last classes as they should not be distinguished by acceleration
+  \item code connected with data preparation is in file:\\ examples $\rightarrow$ Conv1D $\rightarrow$ read\_dataset.py
+\end{itemize}
+\item for PyTorch we prepare data for DataLoader
+\item for Tensorflow we use OneHotEncoding
+\end{itemize}
+\end{frame}
+\begin{frame}
+Implemented in both libraries
+\begin{itemize}
+  \item input layer -- 128 signals (128 acc measurements)
+  \item 1st layer -- Conv 1D, 64 filters 10x1, relu
+  \item 2nd layer -- Conv 1D, 64 filters 10x1, relu
+  \item 3rd layer -- Dropout (.15)
+  \item 4th layer -- MaxPool1D 2, stride 2
+  \item 5th layer -- Dense, 100 neurons, tanh
+  \item out layer -- 6 neurons softmax activation
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Classification results analysis}
+Confusion matrix is the easiest way to analyse the effects of our ML system
+
+%\begin{tikzpicture}[scale=0.6]
+%  \foreach \y [count=\n] in {
+%    {1226, 0,    0,    0,    0,    0},
+%    {3, 1070,    0,    0,    0,    0},
+%    {0,    3,  983,    0,    0,    0},
+%    {0,    0,    0,    0,  913,  373},
+%    {0,    0,    0,    0, 1360,   14},
+%    {1,    0,    0,    0,  134, 1272},
+%    } {
+%      % column labels
+%      \ifnum\n<10
+%        \node[minimum size=6mm] at (\n, 0) {\n};
+%      \fi
+%      % heatmap tiles
+%      \foreach \x [count=\m] in \y {
+%        \node[fill=yellow!\x!purple, minimum size=6mm, text=white] at (\m,-\n) {\x};
+%      }
+%    }
+%
+%  % row labels
+%  \foreach \a [count=\i] in {a,b,c,d,e,f,g,h,i} {
+%    \node[minimum size=6mm] at (0,-\i) {\a};
+%  }
+%\end{tikzpicture}
+\begin{figure}
+\centering
+\hfill
+\begin{subfigure}[b]{0.4\textwidth}
+\resizebox{.9\textwidth}{!}{
+\begin{tikzpicture}
+  \foreach \y [count=\n] in {
+    {1226, 0,    0,    0,    0,    0},
+    {3, 1070,    0,    0,    0,    0},
+    {0,    3,  983,    0,    0,    0},
+    {0,    0,    0,    0,  913,  373},
+    {0,    0,    0,    0, 1360,   14},
+    {1,    0,    0,    0,  134, 1272},
+    } {
+      % column labels
+      \ifnum\n<7
+        \node[minimum size=10mm] at (\n, 0) {\n};
+      \fi
+      % heatmap tiles
+      \foreach \x [count=\m] in \y {
+        \node[fill=orange!\x!cyan, minimum size=10mm,text=white] at (\m,-\n) {\small \x};
+      }
+    }
+
+  % row labels
+  \foreach \a [count=\i] in {1,2,3,4,5,6} {
+    \node[minimum size=10mm] at (0,-\i) {\a};
+  }
+\end{tikzpicture}
+}
+\caption{Confusion matrix for train set, accuracy: $5911/7352 (80\%)$}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.4\textwidth}
+\resizebox{.9\textwidth}{!}{
+\begin{tikzpicture}
+  \foreach \y [count=\n] in {
+    {495,   1,  0,  0,  0,  0},
+    {106, 337, 28,  0,  0,  0},
+    {11,   38,371,  0,  0,  0},
+    { 0,    0,  0,  0,372, 119},
+    { 0,    0,  0,  0,519,  13},
+    { 0,    0,  0,  0, 62, 475},
+    } {
+      % column labels
+      \ifnum\n<7
+        \node[minimum size=10mm] at (\n, 0) {\n};
+      \fi
+      % heatmap tiles
+      \foreach \x [count=\m] in \y {
+        \node[fill=orange!\x!cyan, minimum size=10mm,text=white] at (\m,-\n) {\small \x};
+      }
+    }
+
+  % row labels
+  \foreach \a [count=\i] in {1,2,3,4,5,6} {
+    \node[minimum size=10mm] at (0,-\i) {\a};
+  }
+\end{tikzpicture}
+}
+\caption{Confusion matrix for test set, accuracy: $2197/2947 (75\%)$}
+\end{subfigure}
+\hfill
+\end{figure}
+\end{frame}
+
+\begin{frame}{Advanced tasks}
+This is shown only in PyTorch, but can be done (probaby) in Tensorflow.
+
+Advanced analysis of the network, activations etc.
+\begin{itemize}
+\item We can always get weight and biases for our layers
+\item We can watch ``live'' activations during feed forward pass
+\begin{itemize}
+\item Hook a layer,
+\item Hook can be added to layer or layer after activation function is applied
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\end{document}

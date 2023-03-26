@@ -1,0 +1,22 @@
+% source https://tex.stackexchange.com/questions/104334/tikz-diagram-of-a-perceptron
+\begin{tikzpicture}
+        \node[functions] (center) {};
+        \node[functions,left=3em of center] (left) {$\sum$};
+            \path[draw,->] (left) -- (center);
+        \node[below of=center,font=\scriptsize,text width=4em] {Activation function};
+        \node[above of=left,font=\scriptsize,text width=4.5em] {$k$-th Neuron,\\weights $w_{i}$,\\bias $b$};
+        \draw[thick] (0.5em,0.5em) -- (0,0.5em) -- (0,-0.5em) -- (-0.5em,-0.5em);
+        \draw (0em,0.75em) -- (0em,-0.75em);
+        \draw (0.75em,0em) -- (-0.75em,0em);
+        \node[right of=center] (right) {};
+            \path[draw,->] (center) -- (right);
+        
+        \node[input,left=3em of left] (2) {$x_2$} ;
+            \path[draw,->] (2) -- (left);
+        \node[below of=2] (dots) {$\vdots$} ;
+        \node[input,below of=dots] (n) {$x_n$} ;
+            \path[draw,->] (n) -- (left);
+        \node[input,above of=2] (1) {$x_1$} ;
+            \path[draw,->] (1) -- (left);
+        
+    \end{tikzpicture}
