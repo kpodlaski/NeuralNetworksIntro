@@ -75,4 +75,5 @@ for i in range(6):
           output.data.max(1, keepdim=True)[1][i].item()))
       plt.xticks([])
       plt.yticks([])
-fig.show()
+plt.savefig(base_path+"/out/dense_network_examples.png")
+#fig.show()

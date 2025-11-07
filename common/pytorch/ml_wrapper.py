@@ -1,3 +1,5 @@
+import time
+
 import torch.nn.functional as F
 import torch
 import matplotlib.pyplot as plt
@@ -17,6 +19,7 @@ class ML_Wrapper():
         self.val_losses = []
 
     def train(self, epoch, data_loader, val_loader = None):
+        t0 = time.time()
         self.network.train()
         train_loss = 0
         for batch_idx, (data, target) in enumerate(data_loader):
@@ -28,8 +31,9 @@ class ML_Wrapper():
             train_loss+= loss.item()
             loss.backward()
             self.optimizer.step()
-        print('Train Epoch: {} \tLoss: {:.6f}'.format(
-            epoch, train_loss))
+        t0 = time.time() - t0
+        print('Train Epoch: {} \tLoss: {:.6f}, epoch time(s):{:.4f}'.format(
+            epoch, train_loss, t0))
         self.train_losses.append(train_loss)
         if (val_loader):
             self.test(val_loader, val_test=True)
@@ -87,7 +91,8 @@ class ML_Wrapper():
         plt.legend(['Train Loss', 'Test Loss'], loc='upper right')
         plt.xlabel('epoch')
         plt.ylabel('negative log likelihood loss')
-        fig.show()
+        plt.savefig(self.base_path + '/out/training_plot.png')
+        #fig.show()
 
     def summary(self, size):
         x = torch.Tensor(size).to(self.device)
